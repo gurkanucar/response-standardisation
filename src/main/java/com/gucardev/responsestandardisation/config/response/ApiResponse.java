@@ -80,6 +80,18 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static ApiResponse<Object> successWithEmptyData() {
+        return successWithEmptyData(DEFAULT_SUCCESS_KEY);
+    }
+
+    public static ApiResponse<Object> successWithEmptyData(String messageKey) {
+        return ApiResponse.builder()
+                .error(false)
+                .message(MessageUtil.getMessage(messageKey))
+                .data(null)
+                .build();
+    }
+
     public static ApiResponse<Object> error(Integer businessErrorCode, Map<String, String> validationErrors) {
         return error(DEFAULT_ERROR_KEY, businessErrorCode, validationErrors);
     }

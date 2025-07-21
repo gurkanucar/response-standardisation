@@ -66,6 +66,11 @@ An example of standardized API responses, internationalized exception handling, 
 }
 ```
 
+- turkish
+![img1.png](assets/img1.png)
+- english
+![img.png](assets/img.png)
+
 ## Backend Implementation
 
 ### Controller Example

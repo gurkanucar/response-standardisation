@@ -51,8 +51,7 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = extractFieldErrors(ex);
         log.warn("Validation failed: {}", errors);
-        ApiResponse<Object> response = ApiResponse.error(
-                MessageUtil.getMessage("validation.failed"),
+        ApiResponse<Object> response = ApiResponse.error("validation.failed",
                 ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
                 errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -63,22 +62,9 @@ public class GlobalExceptionHandler {
             ConstraintViolationException ex) {
         Map<String, String> errors = extractConstraintViolations(ex);
         log.warn("Constraint violation: {}", errors);
-        ApiResponse<Object> response = ApiResponse.error(
-                MessageUtil.getMessage("validation.failed"),
+        ApiResponse<Object> response = ApiResponse.error("validation.failed",
                 ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
                 errors);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public final ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException ex) {
-        String errorMessage = MessageUtil.getMessage("error.request.body.missing");
-        log.warn("Message not readable: {}", ex.getMessage());
-        ApiResponse<Object> response = ApiResponse.error(
-                ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
-                errorMessage,
-                null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

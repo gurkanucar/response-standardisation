@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,17 +52,17 @@ public class ProductController {
             description = "This api creates a new product and return created product"
     )
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid ProductCreateRequest productRequest) {
-        ProductDto productDto = productService.createProduct(productRequest);
-        return ResponseEntity.ok(ApiResponse.success(productDto));
+    public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+        var createdProduct = productService.createProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(createdProduct));
     }
 
     @Operation(
             summary = "Update existing product",
             description = "This api updates existing product and return its updated version"
     )
-    @PostMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(@Valid ProductUpdateRequest productRequest, @PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(@Valid @RequestBody ProductUpdateRequest productRequest, @PathVariable Long id) {
         ProductDto productDto = productService.updateProduct(productRequest, id);
         return ResponseEntity.ok(ApiResponse.success(productDto));
     }

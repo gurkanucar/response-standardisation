@@ -62,7 +62,7 @@ const Products = () => {
         }
     });
 
-    const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
         const newSortDir = sorter.order === 'ascend' ? 'asc' : 'desc';
         setSearchParams(prev => ({
             ...prev,
@@ -138,6 +138,9 @@ const Products = () => {
                     current: (searchParams.page ?? 0) + 1,
                     pageSize: searchParams.size,
                     total: data?.data.pageable.totalElements,
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}
                 onChange={handleTableChange}
                 locale={{

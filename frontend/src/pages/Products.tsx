@@ -7,8 +7,10 @@ import {useNavigate} from "react-router-dom";
 import type {ColumnsType} from "antd/es/table";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 import type {BaseResponse} from "../models/api.ts";
+import {useTranslation} from "react-i18next";
 
 const Products = () => {
+    const {t} = useTranslation();
     const [searchParams, setSearchParams] = useState<ProductSearchParams>({
         page: 0,
         size: 10,
@@ -92,17 +94,17 @@ const Products = () => {
     };
 
     const columns: ColumnsType<Product> = [
-        {title: 'ID', dataIndex: 'id', key: 'id', sorter: true},
-        {title: 'Name', dataIndex: 'name', key: 'name', sorter: true},
-        {title: 'Description', dataIndex: 'description', key: 'description', sorter: true},
+        {title: t('id'), dataIndex: 'id', key: 'id', sorter: true},
+        {title: t('name'), dataIndex: 'name', key: 'name', sorter: true},
+        {title: t('description'), dataIndex: 'description', key: 'description', sorter: true},
         {
-            title: 'Action',
+            title: t('action'),
             key: 'action',
             render: (_: any, record: Product) => (
                 <Space size="middle">
                     <Button icon={<EyeOutlined/>} onClick={() => navigate(`/dashboard/products/${record.id}`)}/>
                     <Button icon={<EditOutlined/>} onClick={() => showModal(record)}/>
-                    <Popconfirm title="Sure to delete?" onConfirm={() => deleteMutation.mutate(record.id)}>
+                    <Popconfirm title={t('sure_to_delete')} onConfirm={() => deleteMutation.mutate(record.id)}>
                         <Button icon={<DeleteOutlined/>} danger loading={deleteMutation.isPending && deleteMutation.variables === record.id}/>
                     </Popconfirm>
                 </Space>
@@ -119,14 +121,14 @@ const Products = () => {
                 style={{marginBottom: 16}}
             >
                 <Form.Item name="name">
-                    <Input placeholder="Search by name"/>
+                    <Input placeholder={t('search_by_name')}/>
                 </Form.Item>
                 <Form.Item name="description">
-                    <Input placeholder="Search by description"/>
+                    <Input placeholder={t('search_by_description')}/>
                 </Form.Item>
-                <Button type="primary" htmlType="submit" loading={isLoading}>Search</Button>
+                <Button type="primary" htmlType="submit" loading={isLoading}>{t('search')}</Button>
                 <Button type="primary" icon={<PlusOutlined/>} onClick={() => showModal()} style={{marginLeft: 8}}>
-                    Create
+                    {t('create')}
                 </Button>
             </Form>
             <Table
@@ -140,25 +142,25 @@ const Products = () => {
                     total: data?.data.pageable.totalElements,
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
-                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    showTotal: (total, range) => t('of_items', {range0: range[0], range1: range[1], total}),
                 }}
                 onChange={handleTableChange}
                 locale={{
-                    emptyText: data?.data.pageable.empty ? data.message : 'No Data'
+                    emptyText: data?.data.pageable.empty ? data.message : t('noData')
                 }}
             />
             <Modal
-                title={selectedProduct ? "Update Product" : "Create Product"}
+                title={selectedProduct ? t('update_product') : t('create_product')}
                 open={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 onOk={() => modalForm.submit()}
                 confirmLoading={createMutation.isPending || updateMutation.isPending}
             >
                 <Form form={modalForm} onFinish={handleModalSubmit} layout="vertical">
-                    <Form.Item label="Name" name="name" rules={[{required: true}]}>
+                    <Form.Item label={t('name')} name="name" rules={[{required: true}]}>
                         <Input disabled={!!selectedProduct}/>
                     </Form.Item>
-                    <Form.Item label="Description" name="description" rules={[{required: true}]}>
+                    <Form.Item label={t('description')} name="description" rules={[{required: true}]}>
                         <Input/>
                     </Form.Item>
                 </Form>

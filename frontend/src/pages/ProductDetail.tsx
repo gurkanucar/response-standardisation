@@ -1,3 +1,4 @@
+import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {getProductById} from "../services/productService.ts";
@@ -5,6 +6,7 @@ import {Card, Spin} from "antd";
 
 const ProductDetail = () => {
     const {id} = useParams<{ id: string }>();
+    const {t} = useTranslation();
 
     const {data: product, isLoading, isFetching, isError, error} = useQuery({
         queryKey: ['product', id],
@@ -18,7 +20,7 @@ const ProductDetail = () => {
 
     return (
         <div>
-            <h1>Product Detail Page</h1>
+            <h1>{t('product_detail_page')}</h1>
             <Card title={product?.name}>
                 <p>{product?.description}</p>
             </Card>

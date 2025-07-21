@@ -1,25 +1,23 @@
-import { Card, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from "react-i18next";
+import {Card, Col, Row, Typography} from 'antd';
 
-const { Title, Paragraph } = Typography;
+const {Title} = Typography;
 
-const Dashboard = () => {
-    const { t } = useTranslation();
+function Dashboard() {
+    const {t} = useTranslation();
     return (
-        <Card>
-            <Title level={2}>{t('dashboard')}</Title>
-            <Paragraph>
-                {t('welcome')}
-            </Paragraph>
-            <Paragraph>
-                - Widget 1: Fake data
-                <br />
-                - Widget 2: More fake data
-                <br />
-                - Widget 3: Even more fake data
-            </Paragraph>
-        </Card>
+        <div style={{padding: '50px', minHeight: '100vh'}}>
+            <Row justify="center">
+                <Col span={16}>
+                    <Card>
+                        <Typography>
+                            <Title>{t('welcome_to_dashboard_page')}</Title>
+                        </Typography>
+                    </Card>
+                </Col>
+            </Row>
+        </div>
     );
-};
+}
 
 export default Dashboard;

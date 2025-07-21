@@ -40,16 +40,13 @@ const SidebarLayout: React.FC = () => {
     const items: MenuItem[] = [
         getItem(<Link to="/dashboard">{t('dashboard')}</Link>, 'dashboard', <PieChartOutlined />),
         getItem(<Link to="/dashboard/products">{t('products')}</Link>, 'products', <ProductOutlined />),
+        getItem(<Link to="/dashboard/users">{t('users')}</Link>, 'users', <UserOutlined />),
     ];
 
     const pathSnippets = location.pathname.split('/').filter((i) => i);
     const breadcrumbItems = pathSnippets.map((_, index) => {
         const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-        let title = pathSnippets[index];
-        if (title === 'dashboard') title = t('dashboard');
-        else if (title === 'products') title = t('products');
-        else if (title === 'home') title = t('home');
-        else title = title.charAt(0).toUpperCase() + title.slice(1);
+        const title = t(pathSnippets[index]);
         return {
             key: url,
             title: <Link to={url}>{title}</Link>,
@@ -67,12 +64,12 @@ const SidebarLayout: React.FC = () => {
                 <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }} />
                 <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
                     <div style={{
-                        paddingLeft: 16,
+                        paddingLeft: collapsed ? 0 : 16,
                         textAlign: 'center',
                         display: 'flex',
                         justifyContent: 'start',
                         alignItems: 'center',
-                        flexDirection: 'row',
+                        flexDirection: collapsed ? 'column' : 'row',
                         gap: collapsed ? 16 : 0
                     }}>
                         <LanguageSelector />
@@ -97,7 +94,7 @@ const SidebarLayout: React.FC = () => {
                     </div>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
-                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                    {t('ant_design_credits', { year: new Date().getFullYear() })}
                 </Footer>
             </Layout>
         </Layout>

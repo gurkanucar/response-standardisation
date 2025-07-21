@@ -5,8 +5,8 @@ import ReactCountryFlag from 'react-country-flag';
 import { useUIStore } from '../store/uiStore';
 
 const languages = [
-  { code: 'en', label: 'English', flag: 'GB' },
-  { code: 'tr', label: 'Türkçe', flag: 'TR' },
+  { code: 'en', label: 'english', flag: 'GB' },
+  { code: 'tr', label: 'turkish', flag: 'TR' },
 ];
 
 const LanguageSelector: React.FC = () => {
@@ -30,7 +30,9 @@ const LanguageSelector: React.FC = () => {
       options={languages.map(lang => ({
         value: lang.code,
         label: (
-          <ReactCountryFlag countryCode={lang.flag} svg style={{ width: 20, height: 20 }} />
+          <span title={t(lang.label)}>
+            <ReactCountryFlag countryCode={lang.flag} svg style={{ width: 20, height: 20 }} />
+          </span>
         ),
       }))}
       aria-label={t('select_language')}

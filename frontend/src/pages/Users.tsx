@@ -3,7 +3,7 @@ import {Card, Col, Row, Typography} from 'antd';
 
 const {Title} = Typography;
 
-function Home() {
+function Users() {
     const {t} = useTranslation();
     return (
         <div style={{padding: '50px', minHeight: '100vh'}}>
@@ -11,7 +11,7 @@ function Home() {
                 <Col span={16}>
                     <Card>
                         <Typography>
-                            <Title>{t('welcome_to_home_page')}</Title>
+                            <Title>{t('welcome_to_users_page')}</Title>
                         </Typography>
                     </Card>
                 </Col>
@@ -20,4 +20,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Users;

@@ -3,8 +3,10 @@ import Home from '../pages/Home.tsx';
 import SidebarLayout from '../components/Sidebar.tsx';
 import Dashboard from '../pages/Dashboard.tsx';
 import Products from '../pages/Products.tsx';
+import Users from '../pages/Users.tsx';
 import App from '../App.tsx';
 import ProductDetail from "../pages/ProductDetail.tsx";
+import NotFound from "../pages/NotFound.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -34,9 +36,17 @@ export const router = createBrowserRouter([
                     {
                         path: 'products/:id',
                         element: <ProductDetail />,
-                    }
+                    },
+                    {
+                        path: 'users',
+                        element: <Users/>,
+                    },
                 ],
             },
+            {
+                path: '*',
+                element: <NotFound/>
+            }
         ],
     },
 ]);

@@ -1,10 +1,12 @@
-import {Button, Input, Space, Table, Form, Modal} from 'antd';
+import {Button, Input, Space, Table, Form, Modal, Popconfirm} from 'antd';
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {getProducts, updateProduct} from "../services/productService.ts";
+import {createProduct, deleteProduct, getProducts, updateProduct} from "../services/productService.ts";
 import type {Product, ProductSearchParams} from "../services/productService.ts";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import type {ColumnsType} from "antd/es/table";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import type {BaseResponse} from "../models/api.ts";
 
 const Products = () => {
     const [searchParams, setSearchParams] = useState<ProductSearchParams>({
@@ -15,7 +17,7 @@ const Products = () => {
     });
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [updateForm] = Form.useForm();
+    const [modalForm] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const queryClient = useQueryClient();
@@ -25,11 +27,38 @@ const Products = () => {
         queryFn: () => getProducts(searchParams)
     });
 
-    const updateMutation = useMutation({
-        mutationFn: ({id, description}: { id: number, description: string }) => updateProduct(id, description),
+    const handleMutationError = (error: BaseResponse<any>) => {
+        if (error.validationErrors) {
+            const errorFields = Object.entries(error.validationErrors).map(([name, errors]) => ({
+                name,
+                errors: [errors],
+            }));
+            modalForm.setFields(errorFields);
+        }
+    };
+
+    const createMutation = useMutation({
+        mutationFn: createProduct,
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['products']});
             setIsModalVisible(false);
+        },
+        onError: handleMutationError,
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: updateProduct,
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['products']});
+            setIsModalVisible(false);
+        },
+        onError: handleMutationError,
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteProduct,
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['products']});
         }
     });
 
@@ -48,15 +77,17 @@ const Products = () => {
         setSearchParams(prev => ({...prev, ...values, page: 0}));
     };
 
-    const handleUpdate = (values: any) => {
+    const handleModalSubmit = (values: any) => {
         if (selectedProduct) {
-            updateMutation.mutate({id: selectedProduct.id, description: values.description});
+            updateMutation.mutate({...selectedProduct, ...values});
+        } else {
+            createMutation.mutate(values);
         }
     };
 
-    const showUpdateModal = (product: Product) => {
-        setSelectedProduct(product);
-        updateForm.setFieldsValue({name: product.name, description: product.description});
+    const showModal = (product?: Product) => {
+        setSelectedProduct(product || null);
+        modalForm.setFieldsValue(product || {name: '', description: ''});
         setIsModalVisible(true);
     };
 
@@ -69,14 +100,15 @@ const Products = () => {
             key: 'action',
             render: (_: any, record: Product) => (
                 <Space size="middle">
-                    <Button onClick={() => navigate(`/dashboard/products/${record.id}`)}>View</Button>
-                    <Button onClick={() => showUpdateModal(record)}>Update</Button>
+                    <Button icon={<EyeOutlined/>} onClick={() => navigate(`/dashboard/products/${record.id}`)}/>
+                    <Button icon={<EditOutlined/>} onClick={() => showModal(record)}/>
+                    <Popconfirm title="Sure to delete?" onConfirm={() => deleteMutation.mutate(record.id)}>
+                        <Button icon={<DeleteOutlined/>} danger loading={deleteMutation.isPending && deleteMutation.variables === record.id}/>
+                    </Popconfirm>
                 </Space>
             ),
         },
     ];
-
-    if (isError) return <div>Error: {error.message}</div>;
 
     return (
         <div>
@@ -92,7 +124,10 @@ const Products = () => {
                 <Form.Item name="description">
                     <Input placeholder="Search by description"/>
                 </Form.Item>
-                <Button type="primary" htmlType="submit">Search</Button>
+                <Button type="primary" htmlType="submit" loading={isLoading}>Search</Button>
+                <Button type="primary" icon={<PlusOutlined/>} onClick={() => showModal()} style={{marginLeft: 8}}>
+                    Create
+                </Button>
             </Form>
             <Table
                 columns={columns}
@@ -107,15 +142,15 @@ const Products = () => {
                 onChange={handleTableChange}
             />
             <Modal
-                title="Update Product"
+                title={selectedProduct ? "Update Product" : "Create Product"}
                 open={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
-                onOk={() => updateForm.submit()}
-                confirmLoading={updateMutation.isPending}
+                onOk={() => modalForm.submit()}
+                confirmLoading={createMutation.isPending || updateMutation.isPending}
             >
-                <Form form={updateForm} onFinish={handleUpdate} layout="vertical">
-                    <Form.Item label="Name" name="name">
-                        <Input disabled/>
+                <Form form={modalForm} onFinish={handleModalSubmit} layout="vertical">
+                    <Form.Item label="Name" name="name" rules={[{required: true}]}>
+                        <Input disabled={!!selectedProduct}/>
                     </Form.Item>
                     <Form.Item label="Description" name="description" rules={[{required: true}]}>
                         <Input/>

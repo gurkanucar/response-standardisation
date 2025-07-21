@@ -9,7 +9,7 @@ const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AntdApp>
+        <AntdApp style={{height: '100%'}}>
           <MessageProvider />
           {children}
         </AntdApp>

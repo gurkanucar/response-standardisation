@@ -4,7 +4,7 @@ const {Title} = Typography;
 
 function Products() {
     return (
-        <div style={{padding: '50px', background: '#f0f2f5', minHeight: '100vh'}}>
+        <div style={{padding: '50px', minHeight: '100vh'}}>
             <Row justify="center">
                 <Col span={16}>
                     <Card>

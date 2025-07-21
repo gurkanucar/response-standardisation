@@ -1,13 +1,15 @@
 import { Card, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Paragraph } = Typography;
 
 const Dashboard = () => {
+    const { t } = useTranslation();
     return (
         <Card>
-            <Title level={2}>Dashboard Overview</Title>
+            <Title level={2}>{t('dashboard')}</Title>
             <Paragraph>
-                This is a fake dashboard page. You can add widgets, charts, and other components here.
+                {t('welcome')}
             </Paragraph>
             <Paragraph>
                 - Widget 1: Fake data
@@ -21,4 +23,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

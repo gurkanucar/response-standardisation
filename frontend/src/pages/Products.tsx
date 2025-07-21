@@ -22,9 +22,9 @@ const Products = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const queryClient = useQueryClient();
 
-    const {data, isLoading, isError, error} = useQuery({
+    const {data, isLoading} = useQuery({
         queryKey: ['products', searchParams],
-        queryFn: () => getProducts(searchParams)
+        queryFn: () => getProducts(searchParams),
     });
 
     const handleMutationError = (error: BaseResponse<any>) => {
@@ -131,15 +131,18 @@ const Products = () => {
             </Form>
             <Table
                 columns={columns}
-                dataSource={data?.content}
+                dataSource={data?.data.content}
                 loading={isLoading}
                 rowKey="id"
                 pagination={{
                     current: (searchParams.page ?? 0) + 1,
                     pageSize: searchParams.size,
-                    total: data?.pageable.totalElements,
+                    total: data?.data.pageable.totalElements,
                 }}
                 onChange={handleTableChange}
+                locale={{
+                    emptyText: data?.data.pageable.empty ? data.message : 'No Data'
+                }}
             />
             <Modal
                 title={selectedProduct ? "Update Product" : "Create Product"}

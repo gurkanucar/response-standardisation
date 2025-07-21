@@ -16,9 +16,9 @@ export interface ProductSearchParams {
   sortBy?: string;
 }
 
-export const getProducts = async (params: ProductSearchParams): Promise<Pageable<Product>> => {
+export const getProducts = async (params: ProductSearchParams): Promise<BaseResponse<Pageable<Product>>> => {
   const response = await axiosInstance.get<BaseResponse<Pageable<Product>>>('/products/search', { params });
-  return response.data.data;
+  return response.data;
 }
 
 export const updateProduct = async (product: Product): Promise<Product> => {

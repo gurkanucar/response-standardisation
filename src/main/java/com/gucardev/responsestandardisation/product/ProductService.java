@@ -1,10 +1,14 @@
 package com.gucardev.responsestandardisation.product;
 
 import com.gucardev.responsestandardisation.config.exception.ExceptionMessage;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import static com.gucardev.responsestandardisation.config.exception.ExceptionUtil.buildException;
@@ -30,9 +34,20 @@ public class ProductService {
                 .orElseThrow(() -> buildException(ExceptionMessage.PRODUCT_NOT_FOUND_EXCEPTION, id));
     }
 
-    public Page<ProductDto> getAllProducts(int page, int size) {
-        return productRepository.findAll(Pageable.ofSize(size).withPage(page))
-                .map(ProductDto::new);
+    public Page<ProductDto> searchProducts(@Valid ProductFilterRequest filterRequest) {
+        Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize(),
+                Sort.by(filterRequest.getSortDir(), filterRequest.getSortBy()));
+
+        Specification<Product> spec = Specification.anyOf(
+                ProductSpecification.hasNameLike(filterRequest.getName()),
+                ProductSpecification.hasDescriptionLike(filterRequest.getDescription())
+        );
+
+        Page<Product> accountsPage = productRepository.findAll(spec, pageable);
+        return accountsPage.map(ProductDto::new);
     }
 
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
 }

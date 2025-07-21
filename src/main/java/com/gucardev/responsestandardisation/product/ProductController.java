@@ -39,8 +39,8 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "Create a new account",
-            description = "This api creates a new account and return created account"
+            summary = "Create a new product",
+            description = "This api creates a new product and return created product"
     )
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid ProductRequest productRequest) {

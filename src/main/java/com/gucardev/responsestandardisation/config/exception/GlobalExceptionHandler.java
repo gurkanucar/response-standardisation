@@ -34,6 +34,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, exception.getStatus());
     }
 
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+    public final ResponseEntity<ApiResponse<Object>> handleValidationExceptions(Exception ex) {
+        Map<String, String> errors = extractValidationErrors(ex);
+        log.warn("Validation failed: {}", errors);
+        ApiResponse<Object> response = ApiResponse.error("validation.failed",
+                ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
+                errors);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({NoResourceFoundException.class})
     public ResponseEntity<ApiResponse<Object>> noResourceFoundException(NoResourceFoundException exception) {
         log.warn("Resource not found: {}", exception.getMessage());
@@ -42,28 +52,6 @@ public class GlobalExceptionHandler {
                 status.value(), MessageUtil.getMessage("error.resource.not.found"),
                 null);
         return new ResponseEntity<>(response, status);
-    }
-
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public final ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidEx(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = extractFieldErrors(ex);
-        log.warn("Validation failed: {}", errors);
-        ApiResponse<Object> response = ApiResponse.error("validation.failed",
-                ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
-                errors);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler({ConstraintViolationException.class})
-    public final ResponseEntity<ApiResponse<Object>> handleConstraintViolationEx(
-            ConstraintViolationException ex) {
-        Map<String, String> errors = extractConstraintViolations(ex);
-        log.warn("Constraint violation: {}", errors);
-        ApiResponse<Object> response = ApiResponse.error("validation.failed",
-                ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode(),
-                errors);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
@@ -84,23 +72,22 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 
-    private Map<String, String> extractFieldErrors(MethodArgumentNotValidException ex) {
+    private Map<String, String> extractValidationErrors(Exception ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = (error instanceof FieldError) ? ((FieldError) error).getField() : error.getObjectName();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
-    private Map<String, String> extractConstraintViolations(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
-            errors.put(fieldName, errorMessage);
-        });
+        if (ex instanceof MethodArgumentNotValidException methodEx) {
+            methodEx.getBindingResult().getAllErrors().forEach(error -> {
+                String fieldName = (error instanceof FieldError) ?
+                        ((FieldError) error).getField() : error.getObjectName();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            });
+        } else if (ex instanceof ConstraintViolationException constraintEx) {
+            constraintEx.getConstraintViolations().forEach(violation -> {
+                String fieldName = violation.getPropertyPath().toString();
+                String errorMessage = violation.getMessage();
+                errors.put(fieldName, errorMessage);
+            });
+        }
         return errors;
     }
 

@@ -49,6 +49,16 @@ public class ProductController {
     }
 
     @Operation(
+            summary = "Update existing product",
+            description = "This api updates existing product and return its updated version"
+    )
+    @PostMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(@Valid ProductRequest productRequest, @PathVariable Long id) {
+        ProductDto productDto = productService.updateProduct(productRequest, id);
+        return ResponseEntity.ok(ApiResponse.success(productDto));
+    }
+
+    @Operation(
             summary = "Delete product by id",
             description = "This api deletes product by id"
     )

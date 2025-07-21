@@ -34,6 +34,14 @@ public class ProductService {
                 .orElseThrow(() -> buildException(ExceptionMessage.PRODUCT_NOT_FOUND_EXCEPTION, id));
     }
 
+    public ProductDto updateProduct(ProductRequest productRequest, Long id) {
+        Product existing = getProduct(id);
+        existing.setDescription(productRequest.description());
+        Product updatedProduct = productRepository.save(existing);
+        log.debug("Product updated: {}", updatedProduct);
+        return new ProductDto(updatedProduct);
+    }
+
     public Page<ProductDto> searchProducts(@Valid ProductFilterRequest filterRequest) {
         Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize(),
                 Sort.by(filterRequest.getSortDir(), filterRequest.getSortBy()));

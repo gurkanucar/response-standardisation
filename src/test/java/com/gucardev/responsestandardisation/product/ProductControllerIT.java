@@ -1,6 +1,7 @@
 package com.gucardev.responsestandardisation.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gucardev.responsestandardisation.config.message.MessageUtil;
 import com.gucardev.responsestandardisation.product.model.request.ProductCreateRequest;
 import com.gucardev.responsestandardisation.product.model.request.ProductFilterRequest;
 import com.gucardev.responsestandardisation.product.model.request.ProductUpdateRequest;
@@ -58,6 +59,20 @@ class ProductControllerIT {
                 .andExpect(jsonPath("$.error").value(false))
                 .andExpect(jsonPath("$.data.content[0].name").value(testProduct.getName()))
                 .andExpect(jsonPath("$.data.content[0].description").value(testProduct.getDescription()));
+    }
+
+    @Test
+    void searchProducts_WhenNoProductsExist_ShouldReturnEmptyListMessage() throws Exception {
+        // Remove all products to ensure empty result
+        productRepository.deleteAll();
+        mockMvc.perform(get(BASE_URL + "/search")
+                        .header("Accept-Language", "en")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value(false))
+                .andExpect(jsonPath("$.message").value(MessageUtil.getMessage("emptylist")))
+                .andExpect(jsonPath("$.data.content").isEmpty());
     }
 
     @Test
@@ -134,4 +149,5 @@ class ProductControllerIT {
                         .param("sortBy", ""))
                 .andExpect(status().isBadRequest());
     }
+
 }

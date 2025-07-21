@@ -50,7 +50,8 @@ public class ProductService {
         Pageable pageable = PageRequest.of(filterRequest.getPage(), filterRequest.getSize(),
                 Sort.by(filterRequest.getSortDir(), filterRequest.getSortBy()));
 
-        Specification<Product> spec = Specification.anyOf(
+        //anyOf: or, allOf: and
+        Specification<Product> spec = Specification.allOf(
                 ProductSpecification.hasNameLike(filterRequest.getName()),
                 ProductSpecification.hasDescriptionLike(filterRequest.getDescription())
         );

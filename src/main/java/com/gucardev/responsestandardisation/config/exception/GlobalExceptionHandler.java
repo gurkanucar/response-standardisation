@@ -57,15 +57,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({Exception.class})
     public final ResponseEntity<ApiResponse<Object>> handleAllException(Exception ex) {
         String message;
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         int errorCode = ExceptionMessage.DEFAULT_EXCEPTION.getBusinessErrorCode();
 
         if (isDatabaseException(ex)) {
             log.error("Database exception occurred: ", ex);
             message = MessageUtil.getMessage("database.error");
         } else {
-            log.error("Unhandled exception occurred: ", ex);
-            message = MessageUtil.getMessage("default.error");
+            message = ex.getMessage();
         }
 
         ApiResponse<Object> response = ApiResponse.error(errorCode, message, null);

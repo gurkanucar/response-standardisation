@@ -9,7 +9,6 @@ import lombok.Data;
 import org.slf4j.MDC;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Map;
 
 @JsonPropertyOrder({
@@ -105,22 +104,6 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    @Data
-    @Builder
-    public static class PageableResponse<U> {
-        private List<U> content;
-        private PageDetails pageable;
-    }
 
-    @Data
-    @Builder
-    public static class PageDetails {
-        private long totalElements;
-        private int numberOfElements;
-        private int totalPages;
-        private int size;
-        private boolean last;
-        private boolean first;
-        private boolean empty;
-    }
 }
+

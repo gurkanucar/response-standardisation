@@ -23,9 +23,8 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-    getItem(<Link to="/dashboard">Dashboard</Link>, '0', <PieChartOutlined/>),
-    getItem(<Link to="/dashboard/products">Products</Link>, '1', <ProductOutlined/>),
-
+    getItem(<Link to="/dashboard">Dashboard</Link>, 'dashboard', <PieChartOutlined/>),
+    getItem(<Link to="/dashboard/products">Products</Link>, 'products', <ProductOutlined/>),
 ];
 
 const SidebarLayout: React.FC = () => {
@@ -34,6 +33,14 @@ const SidebarLayout: React.FC = () => {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
     const location = useLocation();
+
+    // Map current path to menu key
+    let selectedKey = 'dashboard';
+    if (location.pathname.startsWith('/dashboard/products')) {
+        selectedKey = 'products';
+    } else if (location.pathname === '/dashboard') {
+        selectedKey = 'dashboard';
+    }
 
     const pathSnippets = location.pathname.split('/').filter((i) => i);
     const breadcrumbItems = pathSnippets.map((_, index) => {
@@ -51,7 +58,7 @@ const SidebarLayout: React.FC = () => {
         <Layout style={{minHeight: '100vh'}}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical"/>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items}/>
+                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" items={items}/>
             </Sider>
             <Layout>
                 <Header style={{padding: 0, background: colorBgContainer}}/>
@@ -76,4 +83,4 @@ const SidebarLayout: React.FC = () => {
     );
 };
 
-export default SidebarLayout; 
+export default SidebarLayout;

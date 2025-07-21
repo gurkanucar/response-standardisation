@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Products from './pages/Products';
 import SidebarLayout from './components/Sidebar';
 import Users from './pages/Users';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/dashboard" element={<SidebarLayout />}>
+                        <Route index element={<Dashboard />} />
                         <Route path="products" element={<Products />} />
                         <Route path="users" element={<Users />} />
                     </Route>

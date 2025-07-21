@@ -1,17 +1,19 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Home from '../pages/Home.tsx';
-import SidebarLayout from '../components/Sidebar.tsx';
-import Dashboard from '../pages/Dashboard.tsx';
-import Products from '../pages/Products.tsx';
-import Users from '../pages/Users.tsx';
-import App from '../App.tsx';
-import ProductDetail from "../pages/ProductDetail.tsx";
-import NotFound from "../pages/NotFound.tsx";
+import {createBrowserRouter, Navigate} from 'react-router-dom';
+import React from "react";
+
+const Home = React.lazy(() => import('../pages/Home.tsx'));
+const Dashboard = React.lazy(() => import('../pages/Dashboard.tsx'));
+const Products = React.lazy(() => import('../pages/Products.tsx'));
+const Users = React.lazy(() => import('../pages/Users.tsx'));
+const ProductDetail = React.lazy(() => import('../pages/ProductDetail.tsx'));
+const NotFound = React.lazy(() => import('../pages/NotFound.tsx'));
+const App = React.lazy(() => import('../App.tsx'));
+const SidebarLayout = React.lazy(() => import('../components/Sidebar.tsx'));
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
+        element: <App/>,
         children: [
             {
                 index: true,
@@ -19,23 +21,23 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'home',
-                element: <Home />,
+                element: <Home/>,
             },
             {
                 path: 'dashboard',
-                element: <SidebarLayout />,
+                element: <SidebarLayout/>,
                 children: [
                     {
                         index: true,
-                        element: <Dashboard />,
+                        element: <Dashboard/>,
                     },
                     {
                         path: 'products',
-                        element: <Products />,
+                        element: <Products/>,
                     },
                     {
                         path: 'products/:id',
-                        element: <ProductDetail />,
+                        element: <ProductDetail/>,
                     },
                     {
                         path: 'users',

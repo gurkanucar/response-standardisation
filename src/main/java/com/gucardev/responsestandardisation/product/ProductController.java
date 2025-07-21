@@ -2,6 +2,10 @@ package com.gucardev.responsestandardisation.product;
 
 import com.gucardev.responsestandardisation.config.response.ApiResponse;
 import com.gucardev.responsestandardisation.config.response.PageableResponse;
+import com.gucardev.responsestandardisation.product.model.request.ProductCreateRequest;
+import com.gucardev.responsestandardisation.product.model.request.ProductFilterRequest;
+import com.gucardev.responsestandardisation.product.model.request.ProductUpdateRequest;
+import com.gucardev.responsestandardisation.product.model.response.ProductDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -47,7 +51,7 @@ public class ProductController {
             description = "This api creates a new product and return created product"
     )
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid ProductRequest productRequest) {
+    public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid ProductCreateRequest productRequest) {
         ProductDto productDto = productService.createProduct(productRequest);
         return ResponseEntity.ok(ApiResponse.success(productDto));
     }
@@ -57,7 +61,7 @@ public class ProductController {
             description = "This api updates existing product and return its updated version"
     )
     @PostMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(@Valid ProductRequest productRequest, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(@Valid ProductUpdateRequest productRequest, @PathVariable Long id) {
         ProductDto productDto = productService.updateProduct(productRequest, id);
         return ResponseEntity.ok(ApiResponse.success(productDto));
     }

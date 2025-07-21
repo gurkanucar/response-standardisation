@@ -1,6 +1,10 @@
 package com.gucardev.responsestandardisation.product;
 
 import com.gucardev.responsestandardisation.config.exception.ExceptionMessage;
+import com.gucardev.responsestandardisation.product.model.request.ProductCreateRequest;
+import com.gucardev.responsestandardisation.product.model.request.ProductFilterRequest;
+import com.gucardev.responsestandardisation.product.model.request.ProductUpdateRequest;
+import com.gucardev.responsestandardisation.product.model.response.ProductDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +24,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductDto createProduct(ProductRequest productRequest) {
+    public ProductDto createProduct(ProductCreateRequest productRequest) {
         if (productRepository.existsByNameIgnoreCase(productRequest.name())) {
             throw buildException(ExceptionMessage.ALREADY_EXISTS_EXCEPTION);
         }
-        Product product = productRepository.save(ProductRequest.toProduct(productRequest));
+        Product product = productRepository.save(ProductCreateRequest.toProduct(productRequest));
         log.debug("Product created: {}", product);
         return new ProductDto(product);
     }
@@ -34,7 +38,7 @@ public class ProductService {
                 .orElseThrow(() -> buildException(ExceptionMessage.PRODUCT_NOT_FOUND_EXCEPTION, id));
     }
 
-    public ProductDto updateProduct(ProductRequest productRequest, Long id) {
+    public ProductDto updateProduct(ProductUpdateRequest productRequest, Long id) {
         Product existing = getProduct(id);
         existing.setDescription(productRequest.description());
         Product updatedProduct = productRepository.save(existing);

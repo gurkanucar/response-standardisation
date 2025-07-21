@@ -1,4 +1,4 @@
-package com.gucardev.responsestandardisation.product;
+package com.gucardev.responsestandardisation.product.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -17,7 +17,6 @@ public class ProductFilterRequest {
     @Schema(description = "Filter by name", example = "phone")
     @Size(max = 255)
     private String name;
-
 
     @Schema(description = "Filter by description", example = "phone")
     @Size(max = 255)

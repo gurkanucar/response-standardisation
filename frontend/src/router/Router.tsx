@@ -4,6 +4,7 @@ import SidebarLayout from '../components/Sidebar.tsx';
 import Dashboard from '../pages/Dashboard.tsx';
 import Products from '../pages/Products.tsx';
 import App from '../App.tsx';
+import ProductDetail from "../pages/ProductDetail.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -30,8 +31,12 @@ export const router = createBrowserRouter([
                         path: 'products',
                         element: <Products />,
                     },
+                    {
+                        path: 'products/:id',
+                        element: <ProductDetail />,
+                    }
                 ],
             },
         ],
     },
-]); 
+]);

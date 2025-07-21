@@ -40,7 +40,6 @@ const SidebarLayout: React.FC = () => {
     const items: MenuItem[] = [
         getItem(<Link to="/dashboard">{t('dashboard')}</Link>, 'dashboard', <PieChartOutlined />),
         getItem(<Link to="/dashboard/products">{t('products')}</Link>, 'products', <ProductOutlined />),
-        getItem(<Link to="/dashboard/users">{t('users')}</Link>, 'users', <UserOutlined />),
     ];
 
     const pathSnippets = location.pathname.split('/').filter((i) => i);
@@ -49,7 +48,6 @@ const SidebarLayout: React.FC = () => {
         let title = pathSnippets[index];
         if (title === 'dashboard') title = t('dashboard');
         else if (title === 'products') title = t('products');
-        else if (title === 'users') title = t('users');
         else if (title === 'home') title = t('home');
         else title = title.charAt(0).toUpperCase() + title.slice(1);
         return {

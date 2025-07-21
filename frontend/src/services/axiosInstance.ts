@@ -1,11 +1,7 @@
 import axios from 'axios';
 
-// Create an Axios instance with a default base URL
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+export const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8080/api/v1',
 });
 
 // Request interceptor: you can attach tokens or modify headers here
@@ -29,6 +25,4 @@ axiosInstance.interceptors.response.use(
     console.error('API Error:', error);
     return Promise.reject(error);
   },
-);
-
-export default axiosInstance; 
+); 

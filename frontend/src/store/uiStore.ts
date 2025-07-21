@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UIState {
   language: string;
@@ -7,10 +8,17 @@ interface UIState {
   setTheme: (theme: 'light' | 'dark') => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
-  language: 'en',
-  setLanguage: (lang) => set({ language: lang }),
-  theme: 'light',
-  setTheme: (theme) => set({ theme }),
-}));
+export const useUIStore = create<UIState>()(
+  persist(
+    (set) => ({
+      language: 'en',
+      setLanguage: (lang) => set({ language: lang }),
+      theme: 'light',
+      setTheme: (theme) => set({ theme }),
+    }),
+    {
+      name: 'ui-storage', // name of the item in the storage (must be unique)
+    }
+  )
+);
 

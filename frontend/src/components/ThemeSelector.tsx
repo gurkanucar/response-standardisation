@@ -12,7 +12,6 @@ const ThemeSelector = () => {
       checkedChildren={<MoonOutlined />}
       unCheckedChildren={<BulbOutlined />}
       onChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-      style={{ marginLeft: 8 }}
     />
   );
 };

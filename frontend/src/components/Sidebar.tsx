@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {PieChartOutlined, ProductOutlined} from '@ant-design/icons';
-import type {MenuProps} from 'antd';
-import {Breadcrumb, Layout, Menu, theme} from 'antd';
-import {Link, Outlet, useLocation} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { PieChartOutlined, ProductOutlined, UserOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Breadcrumb, ConfigProvider, Divider, Layout, Menu, theme } from 'antd';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from './LanguageSelector';
 import ThemeSelector from './ThemeSelector';
 
-const {Header, Content, Footer, Sider} = Layout;
+const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -28,22 +28,19 @@ function getItem(
 const SidebarLayout: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
-        token: {colorBgContainer, borderRadiusLG},
+        token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     const location = useLocation();
     const { t } = useTranslation();
 
     // Map current path to menu key
-    let selectedKey = 'dashboard';
-    if (location.pathname.startsWith('/dashboard/products')) {
-        selectedKey = 'products';
-    } else if (location.pathname === '/dashboard') {
-        selectedKey = 'dashboard';
-    }
+    const selectedKey = location.pathname.split('/')[2] || 'dashboard';
+
 
     const items: MenuItem[] = [
-        getItem(<Link to="/dashboard">{t('dashboard')}</Link>, 'dashboard', <PieChartOutlined/>),
-        getItem(<Link to="/dashboard/products">{t('products')}</Link>, 'products', <ProductOutlined/>),
+        getItem(<Link to="/dashboard">{t('dashboard')}</Link>, 'dashboard', <PieChartOutlined />),
+        getItem(<Link to="/dashboard/products">{t('products')}</Link>, 'products', <ProductOutlined />),
+        getItem(<Link to="/dashboard/users">{t('users')}</Link>, 'users', <UserOutlined />),
     ];
 
     const pathSnippets = location.pathname.split('/').filter((i) => i);
@@ -53,7 +50,7 @@ const SidebarLayout: React.FC = () => {
         if (title === 'dashboard') title = t('dashboard');
         else if (title === 'products') title = t('products');
         else if (title === 'users') title = t('users');
-        else if (title === '') title = t('home');
+        else if (title === 'home') title = t('home');
         else title = title.charAt(0).toUpperCase() + title.slice(1);
         return {
             key: url,
@@ -61,22 +58,35 @@ const SidebarLayout: React.FC = () => {
         };
     });
 
-    const breadcrumbData = [{key: 'home', title: <Link to="/">{t('home')}</Link>}].concat(breadcrumbItems);
+    const breadcrumbData = [{ key: 'home', title: <Link to="/home">{t('home')}</Link> }].concat(breadcrumbItems);
 
     return (
-        <Layout style={{minHeight: '100vh'}}>
+        <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <div className="demo-logo-vertical" style={{margin: 16}}/>
-                <div style={{padding: 16, textAlign: 'center'}}>
-                    <LanguageSelector />
-                    <ThemeSelector />
+                <div className="demo-logo-vertical" style={{ margin: 16, textAlign: 'center' }}>
                 </div>
-                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" items={items}/>
+                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline" items={items} />
+                <Divider style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }} />
+                <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+                    <div style={{
+                        paddingLeft: 16,
+                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'start',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        gap: collapsed ? 16 : 0
+                    }}>
+                        <LanguageSelector />
+                        <ThemeSelector />
+                    </div>
+                </ConfigProvider>
             </Sider>
             <Layout>
-                <Header style={{padding: 0, background: colorBgContainer}}/>
-                <Content style={{margin: '0 16px'}}>
-                    <Breadcrumb style={{margin: '16px 0'}} items={breadcrumbData}/>
+                <Header style={{ padding: '0 16px', background: colorBgContainer }}>
+                    <Breadcrumb style={{ margin: '16px 0' }} items={breadcrumbData} />
+                </Header>
+                <Content style={{ margin: '16px' }}>
                     <div
                         style={{
                             padding: 24,
@@ -85,10 +95,10 @@ const SidebarLayout: React.FC = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <Outlet/>
+                        <Outlet />
                     </div>
                 </Content>
-                <Footer style={{textAlign: 'center'}}>
+                <Footer style={{ textAlign: 'center' }}>
                     Ant Design ©{new Date().getFullYear()} Created by Ant UED
                 </Footer>
             </Layout>

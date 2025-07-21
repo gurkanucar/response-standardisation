@@ -25,7 +25,11 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<PageableResponse<ProductDto>>> searchProducts(
             @Valid @ParameterObject ProductFilterRequest filterRequest) {
-        return ResponseEntity.ok(ApiResponse.success(productService.searchProducts(filterRequest)));
+        var searchResult = productService.searchProducts(filterRequest);
+        if (searchResult.isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.success(searchResult, "emptylist"));
+        }
+        return ResponseEntity.ok(ApiResponse.success(searchResult));
     }
 
     @Operation(
